@@ -3,6 +3,7 @@ const chatForm = document.getElementById("chatForm");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 const newChatButton = document.getElementById("newChatButton");
+const roleSelect = document.getElementById("roleSelect");
 const connectionDot = document.getElementById("connectionDot");
 const connectionLabel = document.getElementById("connectionLabel");
 const welcomeTemplate = document.getElementById("welcomeTemplate");
@@ -90,7 +91,7 @@ async function sendMessage(rawMessage) {
     const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ user: "student", role: roleSelect.value, message }),
     });
     const data = await response.json();
     typingRow.remove();
