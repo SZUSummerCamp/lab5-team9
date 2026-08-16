@@ -23,7 +23,7 @@ CAMPUS_KEYWORDS = (
 LIBRARY_KEYWORDS = ("library", "book", "borrow", "branch", "reading room")
 COURSE_KEYWORDS = ("course", "class", "subject", "program", "academic", "study")
 TRANSLATION_KEYWORDS = ("translate", "translation", "in chinese", "in english", "翻译")
-SUMMARY_KEYWORDS = ("summarize", "summary", "brief", "overview", "shorten")
+SUMMARY_KEYWORDS = ("summarize", "summarise", "summary", "brief", "overview", "shorten")
 
 # Checked in order: the first skill with a keyword hit wins.
 ROUTES = (
