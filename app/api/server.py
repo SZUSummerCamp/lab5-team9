@@ -60,12 +60,15 @@ def chat(request: ChatRequest) -> ChatResponse:
     result = route(request.message)
 
     # An unmatched message never reached a skill, so there is nothing to authorize.
-    if result.skill_name != "unknown" and not is_allowed(request.role, result.skill_name):
-        log(request.user, result.skill_name, "forbidden", result.duration)
-        raise HTTPException(
-            status_code=403,
-            detail="Your role does not have access to this skill.",
-        )
+    # A chained result names every skill it ran, so each link needs authorizing.
+    if result.skill_name != "unknown":
+        steps = result.skill_name.split("→")
+        if not all(is_allowed(request.role, s) for s in steps):
+            log(request.user, result.skill_name, "forbidden", result.duration)
+            raise HTTPException(
+                status_code=403,
+                detail="Your role does not have access to this skill.",
+            )
 
     log(request.user, result.skill_name, result.status, result.duration)
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from app.shared import SkillResult
 from app.skills.campus import handle as campus_handle
+from app.skills.chained import handle as chained_handle
 from app.skills.course import handle as course_handle
 from app.skills.library import handle as library_handle
 from app.skills.summary import handle as summary_handle
@@ -33,6 +34,9 @@ ROUTES = (
     (CAMPUS_KEYWORDS, campus_handle),
 )
 
+KNOWLEDGE_KEYWORDS = CAMPUS_KEYWORDS + LIBRARY_KEYWORDS + COURSE_KEYWORDS
+CHAIN_KEYWORDS = SUMMARY_KEYWORDS + TRANSLATION_KEYWORDS
+
 UNMATCHED_RESPONSE = (
     "I'm sorry, I can't help with that. Please ask about Shenzhen University "
     "campus, courses, library, or request a translation."
@@ -41,6 +45,13 @@ UNMATCHED_RESPONSE = (
 
 def route(message: str) -> SkillResult:
     lowered = message.lower()
+
+    # A knowledge question that also asks for a summary or a translation needs
+    # more than one skill, so hand the whole message to the chain.
+    has_knowledge = any(keyword in lowered for keyword in KNOWLEDGE_KEYWORDS)
+    has_chain = any(keyword in lowered for keyword in CHAIN_KEYWORDS)
+    if has_knowledge and has_chain:
+        return chained_handle(message)
 
     for keywords, handle in ROUTES:
         if any(keyword in lowered for keyword in keywords):
